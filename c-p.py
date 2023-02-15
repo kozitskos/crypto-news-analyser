@@ -279,13 +279,12 @@ def parse_news():
 						logging.warning("Request failed with status code:", page.status_code, "url:", page)
 			time.sleep(60*2)
 
-get_article_to_analyse()
-# pool = ThreadPoolExecutor(max_workers=3)
-# parsed_news_thread = pool.submit(parse_news)
-# parsed_reviews_thread = pool.submit(get_full_descriptions_reveiw)
-# articles_analyzed = pool.submit(get_article_to_analyse)
-# parsed_news_thread.done()
-# parsed_reviews_thread.done()
-# articles_analyzed.done()
+pool = ThreadPoolExecutor(max_workers=3)
+parsed_news_thread = pool.submit(parse_news)
+parsed_reviews_thread = pool.submit(get_full_descriptions_reveiw)
+articles_analyzed = pool.submit(get_article_to_analyse)
+parsed_news_thread.done()
+parsed_reviews_thread.done()
+articles_analyzed.done()
 
 
