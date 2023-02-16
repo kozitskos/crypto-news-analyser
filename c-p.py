@@ -79,9 +79,8 @@ def gpt_request(article):
 	
 	text = response["choices"][0]["text"]
 	text_string = str(text)
-	print("text=",text_string)
 	edited_text = text_string.replace("\n", "").replace("\\n\\n", "")
-	print("text2=",edited_text)
+
 	
 	return edited_text 
 
