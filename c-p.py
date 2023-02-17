@@ -23,7 +23,7 @@ import logging
 
 global OPEN_AI_API_KEY
 
-OPEN_AI_API_KEY = "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"
+OPEN_AI_API_KEY = "sk-api"
 
 
 def create_database():
