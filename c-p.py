@@ -21,7 +21,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 import logging
 
+global OPEN_AI_API_KEY
 
+OPEN_AI_API_KEY = "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"
 
 
 def create_database():
@@ -61,7 +63,7 @@ if os.path.isfile(DATABASE) is False:
 	create_database()
 
 def gpt_request(article):
-	openai.api_key = "sk"
+	openai.api_key = OPEN_AI_API_KEY
 
 
 	prompt="Extract from article the entities such as stocks or cryptocurrency and predict if price of it will go up or down and please write it in the following format:\ncurrency, prediction, level of certinty in percents generating json response:\n\n\n🔥Hi, friends! Today is a day of meme coins. DOGE pumps by 10%. I'm sure that if we have the bullish BTC , DOGE and SHIB will make +20% at least.\n\nAll this growth is related to rumors on Twitter . Lots of news was published about accepting crypto as the payment method in this social network. Of course, DOGE is the first on the list to PUMP. As usual, SHIB is growing too.\n\nI check the info about the biggest holders. The same as DOGE, SHIB is absolutely centralized coin. 41% of the total supply is accumulated in 1 wallet.\n\n📊 MY TRADING PLAN FOR SHIB:\n1. false breakout of $0.0114-0.0116 value area\n2. volume growth\n3. bullish BTC\n\n🚩The next possible entry point is during the test of $0.012-0.0121 as the support.\n\n✅ MY TARGETS FOR SHIB:\n🔥 $0.0131 - the key level, local high\n🔥 $0.0137 - the key level\n🔥 $0.0152 -the key level and global high\n\nTraders, do you believe in the bright future of such crypto as SHIB, DOGE, FLOKI? Share your thought in the comments!\n\n💻Friends, press the \"boost\"🚀 button, write comments and share with your friends - it will be the best THANK YOU.\n\nP.S. Personally, I open an entry if the price shows it according to my strategy.\nAlways do your analysis before making a trade.\n\n{ \"SHIB\": { \"prediction\": \"up\", \"level_of_certainty\": \"90%\" }, \"DOGE\": { \"prediction\": \"up\", \"level_of_certainty\": \"80%\" }, \"FLOKI\": { \"prediction\": \"up\", \"level_of_certainty\": \"70%\" } }\n\n#######\n\nExtract from article the entities such as stocks or cryptocurrency and predict if price of it will go up or down and please write it in the following format:\ncurrency, prediction, level of certinty in percents generating json response:\n\nAvalanche ‘bull trap’ risks pushing AVAX price down by 30% in February\nThe price of AVAX has more than doubled in 2023, but a growing divergence between several key metrics hints at a bearish reversal ahead.\n\n1775\nTotal views\n5\nTotal shares\nListen to article\n\n2:40\nAvalanche ‘bull trap’ risks pushing AVAX price down by 30% in FebruaryALTCOIN WATCH\nOwn this piece of history\nCollect this article as an NFT\n\n\n\nAvalanche \nAVAX\n\ntickers down\n$21.33\n\n bulls should brace themselves for impact led by a growing divergence between several key indicators on the daily-timeframe chart.\n\nAVAX price chart paints bearish divergence\nThe daily AVAX chart shows a classic bearish divergence between its price and relative strength index (RSI), a momentum oscillator forming since Jan. 11.\n\nIn other words, the price of AVAX has been making higher highs since the said date. But, on the other hand, the coin’s daily RSI has been forming lower highs. This divergence suggests a slowdown in the momentum of the AVAX/USD pair, which may lead to a price reversal.\n\n\nAVAX/USD daily price chart. Source: TradingView\nIn addition, the declining volumes during the course of AVAX’s ongoing uptrend also hint at the same bearish cues.\n\nThe price-RSI and price-volume divergences appear as AVAX price continues its 2023 uptrend. Notably, Avalanche has rallied by more than 100% year-to-date to $22.50 as of Feb. 2, helped by improving risk-on sentiments and news of its partnership with Amazon.\n\nAdvertisement\nMarkets Pro: The Fastest Newsfeed In Crypto Now Available To The Public >>>\nOn Jan. 31, Avalanche partnered with Intain, a structured finance platform that facilitates more than $5.5 billion in assets across more than 25 deals to run its digital marketplace IntainMARKETS via IntainMARKETS Subnet.\n\nThe price of AVAX rallied nearly 20% after the announcement.\n\nAVAX’s price risks drop 30% in February\nAVAX’s price has successfully closed above two key resistance levels: a multi-month descending trendline (blacked) and its 200-day exponential moving average (200-day EMA; the blue wave) during the ongoing rally. \n\n\nAVAX/USD daily price chart. Source: TradingView\nAvalanche now eyes a breakout above $22.75, which has been serving as resistance since August 2022, for a potential breakout to $30 as its next upside target. This level also coincides with the falling wedge breakout target discussed in this analysis.\n\nIn other words, an approximately 30% gain from the current price levels. \n\nConversely, a pullback from the resistance level, fueled by the bearish divergence indicators discussed above, could send AVAX’s price toward its 50-day EMA (the red wave) at approximately $15–$16, down about 30% from current prices.\n\n{ \"AVAX\": { \"prediction\": \"down\", \"level_of_certainty\": \"70%\" } }\n\n#######\n\nExtract from article the entities such as stocks or cryptocurrency and predict if price of it will go up or down and please write it in the following format:\ncurrency, prediction, level of certinty in percents generating json response:\n",
@@ -72,7 +74,7 @@ def gpt_request(article):
 	model="text-davinci-003",
 	prompt=prompt,
 	temperature=0,
-	max_tokens=256,
+	max_tokens=500,
 	top_p=1,
 	frequency_penalty=0,
 	presence_penalty=0
@@ -119,9 +121,12 @@ def insert_values_to_crypto_prediction(link, asset, prediction, score):
 
 def parse_json_from_string(string_with_json):
 	# Example string containing JSON object and other information
-
+	print("string_with_json=",string_with_json)
 	# Define regular expression pattern to match JSON object
 	json_pattern = r'{\s*"([^"]*)"\s*:\s*({.*?})\s*}'
+
+
+
 
 	# Search for JSON object in string
 	json_match = re.search(json_pattern, string_with_json)
@@ -354,9 +359,9 @@ def parse_news():
 pool = ThreadPoolExecutor(max_workers=3)
 parsed_news_thread = pool.submit(parse_news)
 parsed_reviews_thread = pool.submit(get_full_descriptions_reveiw)
-articles_analyzed = pool.submit(get_article_to_analyse)
+articles_analyzer_thread = pool.submit(get_article_to_analyse)
 parsed_news_thread.done()
 parsed_reviews_thread.done()
-articles_analyzed.done()
+articles_analyzer_thread.done()
 
 
